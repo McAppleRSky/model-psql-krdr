@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+}
+
+group 'ru.rob'
+version '1.0-SNAPSHOT'
+
+compileJava   {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-test:1.5.22.RELEASE') {
+        exclude(module: 'commons-logging')
+    }
+    implementation 'ch.qos.logback:logback-core:1.2.+'
+    testImplementation 'org.slf4j:slf4j-api:1.8.0-beta4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:1.5.22.RELEASE'
+
+//    implementation 'com.oracle.database.jdbc:ojdbc6:11.2.0.4'
+    implementation 'postgresql:postgresql:9.0-801.jdbc4'
+//    implementation 'com.h2database:h2:2.1.212'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+}
+
+test {
+    useJUnitPlatform()
+}
