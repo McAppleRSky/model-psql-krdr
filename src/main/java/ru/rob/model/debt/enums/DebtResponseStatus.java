@@ -3,7 +3,7 @@ package ru.rob.model.debt.enums;
 public enum DebtResponseStatus {
     NOT_SENT("Без ответа"),
     SENT("Ответ ЖКХ"),
-    AUTO_GENERATED("Автоответ ГИС");
+    AUTO_GENERATED("Автоответ ГIС");
 
     public final String description;
 

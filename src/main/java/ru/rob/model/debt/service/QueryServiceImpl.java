@@ -9,18 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.rob.model.debt.entity.DebtRequest;
 import ru.rob.model.debt.repository.DebtRequestRepository;
 
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,14 +27,15 @@ public class QueryServiceImpl implements QueryService {
     @Autowired
     private DebtRequestRepository repository;
 
-    private final SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
     @Autowired
     public QueryServiceImpl(EntityManagerFactory factory) {
-        if(factory.unwrap(SessionFactory.class) == null){
-            throw new NullPointerException("factory is not a hibernate factory");
+        if(factory == null){
+//            throw new NullPointerException("factory is not a hibernate factory");
+        }  else {
+            this.sessionFactory = factory.unwrap(SessionFactory.class);
         }
-        this.sessionFactory = factory.unwrap(SessionFactory.class);
     }
 
     @Override
@@ -61,7 +57,8 @@ public class QueryServiceImpl implements QueryService {
                     .append(new Object() != null ?
                             "         AND fl.nomer = :flatNumber " : "")
                     .append("         JOIN fls_param fp ON f.id = fp.fls " +
-                            "   WHERE fh.houseguid = :fiasGuid AND fp.attr = 2063 " )
+                            "   WHERE fh.houseguid = :fiasGuid AND fp.attr = 2063 " +
+                            "ORDER BY DESC " )
                     .toString();
             final Query query = session.createSQLQuery(ATTR_SQL)
                     .addScalar("startAttr", StandardBasicTypes.TIMESTAMP)
@@ -98,6 +95,50 @@ list.remove(0);
 
         LOGGER.info(" -> EXEC SQL complete: ");
         System.out.println();
+    }
+
+    boolean haveDebtByFlsAttr(List<Map<String, Object>> maps, Date requestStartDate, Date requestEndDate) {
+//        Comparator<Timestamp> endDateRequestBetween = null;
+//        Comparator<Map<String, Object>> comparator
+//                = (m1, m2) -> m1.getName().compareTo(h2.getName())
+        if (maps == null) {
+            return true;
+        } else {
+            for (Map<String, Object> map : maps) {
+                if (((Timestamp) map.get("startAttr")).compareTo(requestEndDate) <= 0) {
+                    if ( ((Integer)map.get("valueAttr")) == 0) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+            return true;
+        }
+//                maps.stream().sorted(Comparator.comparing(map -> ((Timestamp) map.get("finishAttr"))));
+//                maps.forEach(map -> map.get("finishAttr"));
+//                List<Map<String, Object>> toSort = new ArrayList<>();
+//                for (Map<String, Object> stringObjectMap : maps) {
+//                    (Timestamp) stringObjectMap.get("finishAttr");
+//                }
+//                toSort.sort(Comparator.reverseOrder());
+
+//                for (Map<String, Object> map : maps) {
+//                    endDateRequestBetween = (startAttr, finishAttr) -> startAttr.compareTo((Timestamp)map.get(finishAttr)<=0)
+//                }
+
+//                maps.removeIf(map -> ((Timestamp) map.get("startAttr")).after(requestEndDate));
+//                maps.removeIf(map -> ((Timestamp) map.get("finishAttr")).before(requestStartDate));
+//                maps.b
+
+            /*if (maps.size()>1) {
+                maps.stream()
+
+                        .filter(map -> ((Timestamp) map.get("startAttr")).compareTo(requestEndDate) <= 0)
+                        .filter(map -> ((Timestamp) map.get("finishAttr")).compareTo(requestStartDate) >= 1)
+                        .max(Comparator.comparing(map -> ((Timestamp) map.get("finishAttr"))));
+
+            }*/
     }
 
 }

@@ -1,4 +1,4 @@
-package ru.rob.model.fetchvlgd;
+package ru.rob.model.debt;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
