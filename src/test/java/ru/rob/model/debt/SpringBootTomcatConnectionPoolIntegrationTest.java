@@ -4,7 +4,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * @author eugenBoris
- * @version 0.001
+ * @version 0.0.0-001
  */
 
 @SpringBootTest
